@@ -6,8 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="mRPC" />
+        <module name="share" />
+        <module name="client" />
+        <module name="server" />
+        <module name="RPC" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel target="11" />
   </component>
 </project>

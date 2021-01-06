@@ -13,5 +13,6 @@ public class RpcProvider {
     public static void main(String args[]) throws Exception {
         HelloService helloService = new HelloServiceImpl();
         RpcFramework.export(helloService, 1234);
+//        ServiceLoader.load()
     }
 }

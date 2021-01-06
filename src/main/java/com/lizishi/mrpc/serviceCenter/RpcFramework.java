@@ -27,7 +27,7 @@ public class RpcFramework {
             throw new IllegalArgumentException("service instance == null");
         if(port < 0 || port > 65535)
             throw new IllegalArgumentException("Invalid port: " + port);
-        System.out.println("Export Service" + service.getClass().getName() + " on port " + port);
+        logger.info("Export Service" + service.getClass().getName() + " on port " + port);
         ServerSocket server = new ServerSocket(port);
         while(true) {
             // 服务端监听
@@ -89,7 +89,7 @@ public class RpcFramework {
             throw new IllegalArgumentException("host == null !!");
         if(port < 0 || port > 65535)
             throw new IllegalArgumentException("Invalid port " + port);
-        System.out.println("Get remote service " + interfaceClass.getName() + " from server " + host + " : " + port);
+        logger.info("Get remote service " + interfaceClass.getName() + " from server " + host + " : " + port);
 
         return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass},
                 new InvocationHandler() { // 动态代理进行包装, 看似是调用一个方法,实际上内部是通过socket传到服务器运行,并接受运行产生的结果
