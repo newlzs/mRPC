@@ -38,18 +38,22 @@ public class ServerHandler extends SimpleChannelInboundHandler<RPCRequest> {
             // 拿到服务
             String interfaceName = msg.getInterfaceName();
             Object service = serverRegister.getService(interfaceName);
-            String methodName = msg.getMethodName();
-            Object[] arguments = msg.getParameters();
-            Class<?>[] paramTypes = msg.getParamTypes();
-            // 拿到方法
-            Method method = service.getClass().getMethod(methodName, paramTypes);
-            // 得到结果
-            Object result = method.invoke(service, arguments);
-            // 封装
-            RPCResponse<Object> response = new RPCResponse<Object>();
-            response.setStatusCode(200);
-            response.setMessage("succeed");
-            response.setData(result);
+            RPCResponse response;
+            // 找不到服务
+            if(service == null){
+                response = RPCResponse.fail(null);
+            }else {
+                // 找到服务
+                String methodName = msg.getMethodName();
+                Object[] arguments = msg.getParameters();
+                Class<?>[] paramTypes = msg.getParamTypes();
+                // 拿到方法
+                Method method = service.getClass().getMethod(methodName, paramTypes);
+                // 得到结果
+                Object result = method.invoke(service, arguments);
+                // 封装
+                response = RPCResponse.success(result);
+            }
             final ChannelFuture f = ctx.writeAndFlush(response);
             f.addListener(ChannelFutureListener.CLOSE);
         }finally {

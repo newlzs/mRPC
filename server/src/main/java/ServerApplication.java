@@ -2,6 +2,8 @@ import ServiceImpl.HelloServiceImpl;
 import pojo.HelloObject;
 import rpc.registry.ServerRegistry;
 import rpc.registry.impl.ServerRegisterImpl;
+import rpc.serialize.impl.HessianSerializer;
+import rpc.serialize.impl.KryoSerializer;
 import rpc.transport.server.ServicePublish;
 import rpc.serialize.impl.JSONSerializer;
 import service.HelloService;
@@ -17,6 +19,6 @@ public class ServerApplication {
     public static void main(String args[]) throws Exception {
         ServerRegistry serverRegistry = new ServerRegisterImpl();
         serverRegistry.register(new HelloServiceImpl(), HelloService.class.getName());
-        new ServicePublish(8080, new JSONSerializer()).run();
+        new ServicePublish(8080, new HessianSerializer()).run();
     }
 }

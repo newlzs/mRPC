@@ -1,7 +1,9 @@
 package rpc.pojo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import rpc.config.ResponseStatusCode;
 
 import java.io.Serializable;
 
@@ -18,4 +20,20 @@ public class RPCResponse<T> implements Serializable {
     private String  message;
     // 结果
     private T data;
+
+    public static <T> RPCResponse<T> success(T data) {
+        RPCResponse<T> response = new RPCResponse<>();
+        response.setMessage("success");
+        response.setStatusCode(ResponseStatusCode.SUCCESS);
+        response.setData(data);
+        return response;
+    }
+
+    public static <T> RPCResponse<T> fail(T data) {
+        RPCResponse<T> response = new RPCResponse<>();
+        response.setMessage("fail");
+        response.setStatusCode(ResponseStatusCode.FAIL);
+        response.setData(data);
+        return response;
+    }
 }

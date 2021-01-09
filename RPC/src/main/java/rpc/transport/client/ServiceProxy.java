@@ -2,7 +2,9 @@ package rpc.transport.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rpc.config.ResponseStatusCode;
 import rpc.pojo.RPCRequest;
+import rpc.pojo.RPCResponse;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -38,6 +40,10 @@ public class ServiceProxy implements InvocationHandler {
         logger.info(method.getDeclaringClass().getName());
         // 连接获取结果
         ClientRequest clientRequest = new ClientRequest(host, port);
-        return clientRequest.sendRequest(rpcRequest).getData();
+        RPCResponse response = clientRequest.sendRequest(rpcRequest);
+        if(response.getStatusCode() == ResponseStatusCode.FAIL) {
+            logger.warn("远程调用失败");
+        }
+        return response.getData();
     }
 }

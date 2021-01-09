@@ -27,7 +27,7 @@ public class Encoder extends MessageToByteEncoder {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
-        // 编码的时候不需要类型
+        // 序列化的时候不需要类型
         // 写入msg对应的类型
         if(msg instanceof RPCResponse) {
             out.writeInt(PackageType.RESPONSE_CODE);

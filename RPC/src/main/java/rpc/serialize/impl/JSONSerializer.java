@@ -1,6 +1,7 @@
 package rpc.serialize.impl;
 
 import com.alibaba.fastjson.JSON;
+import rpc.config.SerializerType;
 import rpc.pojo.RPCRequest;
 import rpc.serialize.Serializer;
 
@@ -49,6 +50,6 @@ public class JSONSerializer implements Serializer {
     }
     @Override
     public int getCode() {
-        return 0;
+        return SerializerType.JSON;
     }
 }

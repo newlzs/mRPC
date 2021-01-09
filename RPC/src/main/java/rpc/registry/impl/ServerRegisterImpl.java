@@ -23,7 +23,7 @@ public class ServerRegisterImpl implements ServerRegistry {
 
     // service 实现接口, 一个接口可能有好多service
     @Override
-    public <T> void register(T service, String interfaceName) {
+    public synchronized <T> void register(T service, String interfaceName) {
         if(serviceMap.contains(interfaceName)) {
             logger.info("服务名 {} 已存在", interfaceName);
             return;
@@ -34,7 +34,11 @@ public class ServerRegisterImpl implements ServerRegistry {
     }
 
     @Override
-    public Object getService(String interfaceName) {
-        return serviceMap.get(interfaceName);
+    public synchronized Object getService(String interfaceName) {
+        Object service = serviceMap.get(interfaceName);
+        if(service == null){
+            logger.warn("找不到对应的服务");
+        }
+        return service;
     }
 }

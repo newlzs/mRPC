@@ -14,7 +14,9 @@ import rpc.coder.Encoder;
 import rpc.handler.ClientHandler;
 import rpc.pojo.RPCRequest;
 import rpc.pojo.RPCResponse;
+import rpc.serialize.impl.HessianSerializer;
 import rpc.serialize.impl.JSONSerializer;
+import rpc.serialize.impl.KryoSerializer;
 
 
 /**
@@ -37,7 +39,7 @@ public class ClientRequest {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(new Decoder());
-                ch.pipeline().addLast(new Encoder(new JSONSerializer()));
+                ch.pipeline().addLast(new Encoder(new HessianSerializer()));
                 ch.pipeline().addLast(new ClientHandler());
             }
         });
