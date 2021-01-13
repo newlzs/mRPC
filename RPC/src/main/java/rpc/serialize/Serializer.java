@@ -1,7 +1,7 @@
 package rpc.serialize;
 
 import rpc.config.SerializerType;
-import rpc.exception.exactException.SerializeException;
+import rpc.exception.SerializeException;
 import rpc.serialize.impl.HessianSerializer;
 import rpc.serialize.impl.JSONSerializer;
 import rpc.serialize.impl.KryoSerializer;

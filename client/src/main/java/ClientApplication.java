@@ -14,5 +14,4 @@ public class ClientApplication {
         String ret = helloService.hello(new HelloObject(10, "我从客户端来"));
         System.out.println(ret);
     }
-
 }

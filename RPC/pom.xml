@@ -46,6 +46,13 @@
             <artifactId>hessian</artifactId>
             <version>4.0.62</version>
         </dependency>
+<!--       nacos -->
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
     </dependencies>
 
 

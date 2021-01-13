@@ -2,7 +2,7 @@ package rpc.registry.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rpc.registry.ServerRegistry;
+import rpc.registry.ServiceProvider;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,12 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2021/1/5 23:05
  * @description
  */
-public class ServerRegisterImpl implements ServerRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(ServerRegisterImpl.class);
+public class ServiceProviderImpl implements ServiceProvider {
+    private static final Logger logger = LoggerFactory.getLogger(ServiceProviderImpl.class);
     // 懒汉模式
     private static ConcurrentHashMap<String, Object> serviceMap;
 
-    public ServerRegisterImpl() {
+    public ServiceProviderImpl() {
         if(serviceMap == null)
             serviceMap = new ConcurrentHashMap<String, Object>();
     }

@@ -13,7 +13,13 @@ import org.slf4j.LoggerFactory;
 import rpc.coder.Decoder;
 import rpc.coder.Encoder;
 import rpc.handler.ServerHandler;
+import rpc.registry.ServiceProvider;
+import rpc.registry.ServiceRegistry;
+import rpc.registry.impl.NacosServiceRegistry;
+import rpc.registry.impl.ServiceProviderImpl;
 import rpc.serialize.Serializer;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author Lzs
@@ -23,12 +29,34 @@ import rpc.serialize.Serializer;
 public class ServicePublish {
     private static final Logger logger = LoggerFactory.getLogger(ServicePublish.class);
     private int port;
+    private String host;
     private Serializer serializer;
-    public ServicePublish(int port, Serializer serializer) {
+    private ServiceRegistry serviceRegistry;
+    private ServiceProvider serviceProvider;
+    public ServicePublish(String host, int port, Serializer serializer, boolean serviceRegister) {
         this.port = port;
+        this.host = host;
         this.serializer = serializer;
+        serviceRegistry = new NacosServiceRegistry();
+        serviceProvider = new ServiceProviderImpl();
     }
 
+    /**
+     * 发布服务
+     * @param service
+     * @param serviceName
+     */
+    public void publish(Object service, String serviceName) {
+        // 添加本地注册表
+        serviceProvider.register(service, serviceName);
+        // 注册到远程注册中心
+        serviceRegistry.register(serviceName, new InetSocketAddress(host, port));
+    }
+
+    /**
+     * 启动开启服务
+     * @throws Exception
+     */
     public void run() throws Exception {
         EventLoopGroup boss = new NioEventLoopGroup();
         EventLoopGroup worker = new NioEventLoopGroup();

@@ -19,6 +19,8 @@ public class ServiceProxy implements InvocationHandler {
     private static final Logger logger = LoggerFactory.getLogger(ServiceProxy.class);
     private String host;
     private int port;
+    public ServiceProxy() {
+    }
     public ServiceProxy(String host, int port) {
         this.host = host;
         this.port = port;
@@ -39,7 +41,10 @@ public class ServiceProxy implements InvocationHandler {
                 .build();
         logger.info(method.getDeclaringClass().getName());
         // 连接获取结果
-        ClientRequest clientRequest = new ClientRequest(host, port);
+        // 直连方式
+//        ClientRequest clientRequest = new ClientRequest(host, port);
+        // 注册中心方式
+        ClientRequest clientRequest = new ClientRequest(method.getDeclaringClass().getName());
         RPCResponse response = clientRequest.sendRequest(rpcRequest);
         if(response.getStatusCode() == ResponseStatusCode.FAIL) {
             logger.warn("远程调用失败");

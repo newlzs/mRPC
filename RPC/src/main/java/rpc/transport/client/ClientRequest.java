@@ -14,9 +14,13 @@ import rpc.coder.Encoder;
 import rpc.handler.ClientHandler;
 import rpc.pojo.RPCRequest;
 import rpc.pojo.RPCResponse;
+import rpc.registry.ServiceRegistry;
+import rpc.registry.impl.NacosServiceRegistry;
 import rpc.serialize.impl.HessianSerializer;
 import rpc.serialize.impl.JSONSerializer;
 import rpc.serialize.impl.KryoSerializer;
+
+import java.net.InetSocketAddress;
 
 
 /**
@@ -29,6 +33,7 @@ public class ClientRequest {
     private String host;
     private int port;
     private static final Bootstrap b;
+    private static ServiceRegistry serviceRegistry = new NacosServiceRegistry();
     static {
         EventLoopGroup workGroup = new NioEventLoopGroup();
         b = new Bootstrap();
@@ -45,9 +50,16 @@ public class ClientRequest {
         });
 
     }
+    // 直接给定服务地址
     public ClientRequest(String host, int port) {
         this.host = host;
         this.port = port;
+    }
+    // 向远程注册中心查找服务地址
+    public ClientRequest(String serviceName) {
+        InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(serviceName);
+        this.host = inetSocketAddress.getHostName();
+        this.port = inetSocketAddress.getPort();
     }
 
     public RPCResponse sendRequest(RPCRequest rpcRequest) throws InterruptedException {

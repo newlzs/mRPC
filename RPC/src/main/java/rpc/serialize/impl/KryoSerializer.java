@@ -6,7 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc.config.SerializerType;
-import rpc.exception.exactException.SerializeException;
+import rpc.exception.SerializeException;
 import rpc.serialize.Serializer;
 
 import java.io.ByteArrayInputStream;

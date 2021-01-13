@@ -4,18 +4,15 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc.pojo.RPCRequest;
 import rpc.pojo.RPCResponse;
-import rpc.registry.ServerRegistry;
-import rpc.registry.impl.ServerRegisterImpl;
+import rpc.registry.ServiceProvider;
+import rpc.registry.impl.ServiceProviderImpl;
 
-import javax.imageio.spi.ServiceRegistry;
 import java.lang.reflect.Method;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Lzs
@@ -25,10 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServerHandler extends SimpleChannelInboundHandler<RPCRequest> {
     private static final Logger logger = LoggerFactory.getLogger(ServerHandler.class);
 
-    public static ServerRegistry serverRegister;
+    public static ServiceProvider serverRegister;
 
     static {
-        serverRegister = new ServerRegisterImpl();
+        serverRegister = new ServiceProviderImpl();
     }
 
     @Override
