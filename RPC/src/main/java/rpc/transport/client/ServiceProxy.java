@@ -3,12 +3,17 @@ package rpc.transport.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rpc.config.ResponseStatusCode;
+import rpc.loadBalancer.LoadBalancer;
+import rpc.loadBalancer.impl.FirstBalancer;
 import rpc.pojo.RPCRequest;
 import rpc.pojo.RPCResponse;
+import rpc.serialize.Serializer;
+import rpc.serialize.impl.HessianSerializer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.UUID;
 
 /**
  * @author Lzs
@@ -17,13 +22,17 @@ import java.lang.reflect.Proxy;
  */
 public class ServiceProxy implements InvocationHandler {
     private static final Logger logger = LoggerFactory.getLogger(ServiceProxy.class);
-    private String host;
-    private int port;
+    private LoadBalancer loadBalancer;
+    private Serializer serializer;
+    private ClientRequest clientRequest;
+
     public ServiceProxy() {
+        this(new FirstBalancer(), new HessianSerializer());
     }
-    public ServiceProxy(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public ServiceProxy(LoadBalancer loadBalancer, Serializer serializer) {
+        this.loadBalancer = loadBalancer;
+        this.serializer = serializer;
+        this.clientRequest = new ClientRequest(loadBalancer, serializer);
     }
 
     public <T> T getProxy(Class<T> interfaceClass) {
@@ -38,13 +47,10 @@ public class ServiceProxy implements InvocationHandler {
                 .methodName(method.getName())
                 .parameters(args)
                 .paramTypes(method.getParameterTypes())
+                .id(UUID.randomUUID().toString())
                 .build();
         logger.info(method.getDeclaringClass().getName());
-        // 连接获取结果
-        // 直连方式
-//        ClientRequest clientRequest = new ClientRequest(host, port);
-        // 注册中心方式
-        ClientRequest clientRequest = new ClientRequest(method.getDeclaringClass().getName());
+
         RPCResponse response = clientRequest.sendRequest(rpcRequest);
         if(response.getStatusCode() == ResponseStatusCode.FAIL) {
             logger.warn("远程调用失败");

@@ -18,6 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RPCRequest implements Serializable {
+    private String id;
     // 接口名
     private String interfaceName;
     // 方法名
@@ -26,4 +27,8 @@ public class RPCRequest implements Serializable {
     private Object[] parameters;
     // 参数类型
     private Class<?>[] paramTypes;
+
+    public String getHashKey() {
+        return interfaceName + methodName;
+    }
 }

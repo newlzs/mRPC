@@ -13,13 +13,16 @@ import org.slf4j.LoggerFactory;
 import rpc.coder.Decoder;
 import rpc.coder.Encoder;
 import rpc.handler.ServerHandler;
+import rpc.hook.ShutDownHook;
 import rpc.registry.ServiceProvider;
 import rpc.registry.ServiceRegistry;
 import rpc.registry.impl.NacosServiceRegistry;
 import rpc.registry.impl.ServiceProviderImpl;
 import rpc.serialize.Serializer;
+import rpc.utils.NacosUtils;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Lzs
@@ -38,7 +41,7 @@ public class ServicePublish {
         this.host = host;
         this.serializer = serializer;
         serviceRegistry = new NacosServiceRegistry();
-        serviceProvider = new ServiceProviderImpl();
+        serviceProvider = ServiceProviderImpl.getInstance();
     }
 
     /**
@@ -48,7 +51,7 @@ public class ServicePublish {
      */
     public void publish(Object service, String serviceName) {
         // 添加本地注册表
-        serviceProvider.register(service, serviceName);
+        serviceProvider.register(serviceName, service);
         // 注册到远程注册中心
         serviceRegistry.register(serviceName, new InetSocketAddress(host, port));
     }
@@ -78,9 +81,14 @@ public class ServicePublish {
                 }
             });
 
-            ChannelFuture f = b.bind(port).sync();
+            ChannelFuture f = b.bind(host, port).sync();
             logger.info("服务运行在 {} 端口", port);
+            // 添加钩子，关闭服务时，处理注册中心残留
+            // https://www.bbsmax.com/A/pRdBe0Bn5n/
+            ShutDownHook.clearAllServiceHook(new InetSocketAddress(host, port));
+
             f.channel().closeFuture().sync();
+
         }finally {
             worker.shutdownGracefully();
             boss.shutdownGracefully();

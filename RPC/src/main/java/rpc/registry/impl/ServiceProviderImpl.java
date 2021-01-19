@@ -13,17 +13,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServiceProviderImpl implements ServiceProvider {
     private static final Logger logger = LoggerFactory.getLogger(ServiceProviderImpl.class);
-    // 懒汉模式
-    private static ConcurrentHashMap<String, Object> serviceMap;
+    private ConcurrentHashMap<String, Object> serviceMap;
 
-    public ServiceProviderImpl() {
-        if(serviceMap == null)
-            serviceMap = new ConcurrentHashMap<String, Object>();
+    // 单例模式 懒汉
+    private static ServiceProviderImpl instance;
+
+    public static synchronized ServiceProviderImpl getInstance() {
+        if(instance == null) {
+            instance = new ServiceProviderImpl();
+        }
+        return instance;
     }
 
+    public ServiceProviderImpl() {
+         this.serviceMap = new ConcurrentHashMap<String, Object>();
+    }
     // service 实现接口, 一个接口可能有好多service
     @Override
-    public synchronized <T> void register(T service, String interfaceName) {
+    public synchronized <T> void register(String interfaceName, T service) {
         if(serviceMap.contains(interfaceName)) {
             logger.info("服务名 {} 已存在", interfaceName);
             return;
@@ -40,5 +47,9 @@ public class ServiceProviderImpl implements ServiceProvider {
             logger.warn("找不到对应的服务");
         }
         return service;
+    }
+
+    public ConcurrentHashMap<String, Object> getServiceMap() {
+        return this.serviceMap;
     }
 }

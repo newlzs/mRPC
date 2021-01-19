@@ -6,6 +6,6 @@ package rpc.registry;
  * @description 本地注册表
  */
 public interface ServiceProvider {
-    <T> void register(T service, String name);
+    <T> void register(String name, T service);
     public Object  getService(String name);
 }

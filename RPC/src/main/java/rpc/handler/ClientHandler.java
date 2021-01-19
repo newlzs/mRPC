@@ -4,7 +4,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rpc.factory.SingletonFactory;
 import rpc.pojo.RPCResponse;
+import rpc.transport.UnprocessedRequests;
 
 /**
  * @author Lzs
@@ -12,13 +16,19 @@ import rpc.pojo.RPCResponse;
  * @description
  */
 public class ClientHandler extends SimpleChannelInboundHandler<RPCResponse> {
+    private static final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
+
+    private final UnprocessedRequests unprocessedRequests;
+
+    public ClientHandler() {
+        this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
+    }
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RPCResponse msg) throws Exception {
         try{
-            AttributeKey<RPCResponse> key = AttributeKey.valueOf("rpcResponse");
-            ctx.channel().attr(key).set(msg);
-            // 关闭通道
-            ctx.channel().close();
+            logger.info("客户端收到消息: {}", msg.toString());
+            unprocessedRequests.complete(msg);
         }finally {
             ReferenceCountUtil.release(msg);
         }

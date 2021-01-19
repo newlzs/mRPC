@@ -25,7 +25,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<RPCRequest> {
     public static ServiceProvider serverRegister;
 
     static {
-        serverRegister = new ServiceProviderImpl();
+        serverRegister = ServiceProviderImpl.getInstance();
     }
 
     @Override
@@ -51,8 +51,13 @@ public class ServerHandler extends SimpleChannelInboundHandler<RPCRequest> {
                 // 封装
                 response = RPCResponse.success(result);
             }
-            final ChannelFuture f = ctx.writeAndFlush(response);
-            f.addListener(ChannelFutureListener.CLOSE);
+            response.setId(msg.getId());
+
+            if(ctx.channel().isActive() && ctx.channel().isWritable()){
+                ctx.writeAndFlush(response);
+            }else {
+                logger.error("通道不可写入");
+            }
         }finally {
             ReferenceCountUtil.release(msg);
         }
