@@ -3,7 +3,7 @@
   server： 被调用者  
   share： client 和 server共享的数据
 
-![](https://img.imgdb.cn/item/6006d35f3ffa7d37b3ef808b.jpg)
+![img](images/rpc.jpg)
 ## RPC架构
 1. 发布服务 （服务端）  
     将服务发布出去, 并注册到注册中心   
